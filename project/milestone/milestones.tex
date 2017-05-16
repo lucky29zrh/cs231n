@@ -1,0 +1,74 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+
+\cvprfinalcopy % *** Uncomment this line for the final submission
+
+\def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+%\ifcvprfinal\pagestyle{empty}\fi
+\setcounter{page}{1}
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{Tiny ImageNet Challenge: Project Milestone}
+
+\author{Jose Krause Perin\\
+Stanford University\\
+{\tt\small jkperin@stanford.edu}
+% For a paper whose authors are all at the same institution,
+% omit the following lines up until the closing ``}''.
+% Additional authors and addresses can be added with ``\and'',
+% just like the second author.
+% To save space, use either the email address or home page, not both
+}
+
+\maketitle
+%\thispagestyle{empty}
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+Abstract
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Introduction}
+Introduction: this section introduces your problem, and the overall plan for approaching your problem
+
+
+For the class project, I will work on the Tiny ImageNet Challenge. Image classification is one of the core problems in computer vision, and the Tiny ImageNet Challenge will allow me to apply a broad range of the concepts and skills learned in class. The data and evaluation metric for this problem are already well defined. The data was provided on the class website, and the ultimate goal is to design a network architecture that achieves the smallest error rate as possible on the test data set. To start the project, I will review CS 231N previous years projects that tackled the same challenge and, in particular, state-of-the-art implementations such as VGG16 and ResNet-[50,101,152] to gain some insight in designing high-performance convolutional networks. Some of these works also provide trained networks on Github, which will be useful as comparison benchmarks. The final report will compare these (or other) previous works to my own network architectures. The final report will present comparative results in terms of learning curves such as loss vs training epoch and accuracy vs training epoch for each of the models I designed. Moreover, I intend to present a few error cases and discuss why the models may be committing some of the classification errors. 
+
+
+\section{Problem statement}
+Describe your problem precisely specifying the dataset to be used, expected results and evaluation
+
+\section{Technical Approach}
+Describe the methods you intend to apply to solve the given problem
+
+The first task was to load the training, validation, and testing data sets from file and preprocess them to formats. The preprocessing unit consist of removing the mean image and normalize the images so that they are between $[-1, 1]$. The mean image was calculated from the training set and it is subtracted from images from the all data sets.  
+
+The network training is built using Keras with Tensorflow backend. Keras provides a easy-to-use wrapper that allows us to easily build and test network architectures without worrying too much the ``house keeping'' from Tensorflow. 
+
+\section{Preliminary Results}
+State and evaluate your results upto the milestone
+
+{\small
+\bibliographystyle{ieee}
+\bibliography{egbib}
+}
+
+\end{document}

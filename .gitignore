@@ -101,4 +101,11 @@ ENV/
 .mypy_cache/
 
 # Other files
-.JPEG
+*.JPEG
+*.pdf
+*.aux
+*.bst
+*.log
+*.synctex.gz
+*.blg
+*.bbl
