@@ -109,3 +109,4 @@ ENV/
 *.synctex.gz
 *.blg
 *.bbl
+*.h5

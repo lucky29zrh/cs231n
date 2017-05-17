@@ -1,9 +1,31 @@
+import numpy as np
+import random
+from PIL import Image
+
+import os
+import csv
+from os import listdir
+from os.path import isfile, join
+
 def crop_image(X_in, x, y):
-	''' Crop image
-	Resulting image has dimensions (width - 2x) and (height - 2y)
-	'''
-	X_crop = X_in[:, x:-x, y:-y, :];
-	return X_crop;
+    ''' Crop image
+    Resulting image has dimensions (width - 2x) and (height - 2y)
+    '''
+    if x == 0 and y == 0:
+        return X_in;
+    
+    X_crop = X_in[:, x:-x, y:-y, :];
+    return X_crop;
+
+def save_history(history, filename, verbose=True):       
+    with open(filename, 'w') as csv_file:
+        w = csv.writer(csv_file)
+        for key in history.keys():
+            if verbose:
+                print(key, history[key]);
+            
+            w.writerow([key] + history[key])
+    
 
 def load_training_data():
     fids = open("tiny-imagenet-200/wnids.txt","r") 
@@ -29,6 +51,11 @@ def load_training_data():
             X_train.append(imgArray); 
             y_train.append(i);
             meanImage += imgArray;
+    
+    # Shuffle training data
+    c = list(zip(X_train, y_train));
+    random.shuffle(c)
+    X_train, y_train = zip(*c)
     
     X_train = np.array(X_train, dtype="float64");
     y_train = np.array(y_train, dtype="uint8");
@@ -93,11 +120,11 @@ def load_test_data(meanImage):
             
         X_test.append(imgArray); 
         
-    X_test = np.array(X_val, dtype="float64");
+    X_test = np.array(X_test, dtype="float64");
     X_test -= meanImage;
     X_test /= 128; # normalize 
     print("X_test shape:", X_test.shape)
     
-    return X_val, files
+    return X_test, files
 
 
