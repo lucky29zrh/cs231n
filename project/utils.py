@@ -127,4 +127,10 @@ def load_test_data(meanImage):
     
     return X_test, files
 
+def save_test_predictions(filename, test_files, predicted_class):
+    with open(filename, 'w') as f:
+        for i, tf in enumerate(test_files):
+            f.write(tf + " " + predicted_class[i] + "\n");
+            
+
 
