@@ -1,0 +1,66 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{verbatim}
+\usepackage{graphicx}
+
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{math}
+\usetikzlibrary{calc}
+\usepgfplotslibrary{statistics}
+\usetikzlibrary{arrows.meta}
+%\usetikzlibrary{external} \tikzexternalize[prefix=/]
+
+\usepackage[graphics,tightpage,active]{preview}
+\PreviewEnvironment{tikzpicture}
+\newlength{\imagewidth}
+\newlength{\imagescale}
+
+\pgfplotsset{compat=newest} 
+\pgfplotsset{plot coordinates/math parser=false}
+
+\pgfmathdeclarefunction{gauss}{2}{%
+	\pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+\tikzstyle{int}=[draw, minimum size=4em]
+
+\title{diagrams}
+
+
+\begin{document}
+\def\layersep{3cm}
+\def\outsep{0.7cm}
+\def\dy{1.5}
+
+\begin{tikzpicture}[->, >=stealth, shorten >= 0pt, draw=black!50, node distance=\layersep, font=\sffamily]
+\tikzstyle{node}=[circle,fill=black,minimum size=2pt,inner sep=0pt]
+\tikzstyle{block}=[draw=black,rectangle,fill=none,minimum size=1cm, inner sep=0pt]
+\tikzstyle{annot} = []
+\tikzstyle{weight}=[draw=black,circle,fill=none,minimum size=3pt,inner sep=0pt,scale=0.5]
+\tikzstyle{summer}=[weight,scale=1.8, minimum size=15pt]
+
+\node (in) at (0, 0 cm) {Input};
+\node[node] (mid) at (0, -0.7*\dy cm) {};
+\node[block, minimum size=2cm, text width=2cm, align=center] (block1) at (0, -2*\dy cm) {Conv1-$F_1$ \\ Batchnorm \\ ReLu};
+\node[block, minimum size=2cm, text width=2cm, align=center] (block2) at (0, -4*\dy cm) {Conv$K$-$F_2$ \\ BatchNorm \\ ReLu};
+\node[block, minimum size=2cm, text width=2cm, align=center] (block3) at (0, -6*\dy cm) {Conv$1$-$F_3$ \\ BatchNorm \\ Relu};
+\node[summer] (sum1) at (0, -7.5*\dy cm) {\large $+$};
+\node[block] (relu_out) at (0, -8.5*\dy cm) {ReLu};
+\node (out) at (0, -9.5*\dy cm) {Output};
+
+\node[block, minimum size=2cm, text width=2cm, align=center] (shortcut) at (\layersep, -4*\dy cm) {Conv1-$F_3$ \\ Batchnorm};
+
+\path[-] (in) edge (mid);
+\path (mid) edge (block1);    
+\path (block1) edge (block2);	
+\path (block2) edge (block3);	
+\path (block3) edge (sum1);    
+\path (sum1) edge (relu_out);	
+\path (relu_out) edge (out);
+\draw (mid) [out=0, in=90] to (shortcut);
+\draw (shortcut) [out=-90, in=0] to (sum1);
+
+\end{tikzpicture}
+
+\end{document}
