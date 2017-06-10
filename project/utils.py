@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import PIL
 from PIL import Image
 
 import os
@@ -31,7 +32,7 @@ def load_training_data():
     fids = open("tiny-imagenet-200/wnids.txt","r") 
     ids = fids.read().splitlines();
     fids.close();
-    
+                
     X_train = [];
     y_train = [];
     meanImage = np.zeros((64, 64, 3), dtype='float64');
@@ -47,7 +48,7 @@ def load_training_data():
                 a = np.empty((h, w, 3), dtype="uint8")
                 a[:, :, :] = imgArray[:, :, np.newaxis];
                 imgArray = a;
-                
+            
             X_train.append(imgArray); 
             y_train.append(i);
             meanImage += imgArray;
@@ -57,8 +58,8 @@ def load_training_data():
     random.shuffle(c)
     X_train, y_train = zip(*c)
     
-    X_train = np.array(X_train, dtype="float64");
-    y_train = np.array(y_train, dtype="uint8");
+    X_train = np.array(X_train, dtype="float32");
+    y_train = np.array(y_train, dtype="uint8");   
     meanImage /= len(y_train);
     X_train -= meanImage;
     X_train /= 128; # normalize 
@@ -78,6 +79,7 @@ def load_validation_data(ids, meanImage):
             category.append(row[1]);
             
     path = 'tiny-imagenet-200/val/images/';
+           
     X_val = [];
     y_val = [];
     for f, i in zip(filename, category):
@@ -93,7 +95,7 @@ def load_validation_data(ids, meanImage):
         X_val.append(imgArray); 
         y_val.append(ids.index(i));
         
-    X_val = np.array(X_val, dtype="float64");
+    X_val = np.array(X_val, dtype="float32");
     y_val = np.array(y_val, dtype="uint8");
     X_val -= meanImage;
     X_val /= 128; # normalize 
@@ -106,7 +108,7 @@ def load_validation_data(ids, meanImage):
 def load_test_data(meanImage):    
     path = 'tiny-imagenet-200/test/images/';
     files = [f for f in listdir(path) if ".JPEG" in f]
-    
+       
     X_test = [];
     for f in files:
         imgObj = Image.open(path+f);

@@ -1,16 +1,16 @@
-from keras.models import Sequential
+from keras import layers, regularizers
+from keras.models import Sequential, Model
 from keras.layers.noise import GaussianNoise
-from keras.layers.core import Flatten, Dense, Dropout, Activation
-from keras.layers import merge
-from keras.layers.convolutional import Conv2D, MaxPooling2D, ZeroPadding2D
+from keras.layers.core import Flatten, Dense, Dropout, Activation, Lambda
+from keras.layers import merge, Input
+from keras.layers.convolutional import Conv2D, MaxPooling2D, ZeroPadding2D, AveragePooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.utils import np_utils
+import tensorflow as tf
 
-def modified_VGG16(input_shape=(64, 64, 3), drop_rate=0.5, stddev=0):
+def modified_VGG16(input_shape=(64, 64, 3), drop_rate=0.5, reg=0.01):
     model = Sequential()
-    
-    model.add(GaussianNoise(stddev=stddev, input_shape=input_shape)); # noise injection
-    
+       
     # Block 1
     model.add(Conv2D(64, (3, 3), padding='same', strides=(1, 1), activation='relu', input_shape=input_shape, data_format='channels_last', name='block1_conv1'))
     model.add(Conv2D(64, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block1_conv2'))
@@ -31,25 +31,25 @@ def modified_VGG16(input_shape=(64, 64, 3), drop_rate=0.5, stddev=0):
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block4_conv1'))
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block4_conv2'))
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block4_conv3'))
+    #model.add(MaxPooling2D((2,2), strides=(2,2), data_format="channels_last"))
     
     # Block 5
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block5_conv1'))
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block5_conv2'))
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block5_conv3')) 
+    #model.add(MaxPooling2D((2,2), strides=(2,2), data_format="channels_last"))
         
     model.add(Flatten())
-    model.add(Dense(4096, activation='relu', name='fc1_timg'))
+    model.add(Dense(4096, activation='relu', kernel_regularizer=regularizers.l2(reg), name='fc1_timg'))
     model.add(Dropout(drop_rate))
-    model.add(Dense(4096, activation='relu', name='fc2_timg'))
+    model.add(Dense(4096, activation='relu', kernel_regularizer=regularizers.l2(reg), name='fc2_timg'))
     model.add(Dropout(drop_rate))
-    model.add(Dense(200, activation='softmax', name='fc3_200'))
+    model.add(Dense(200, activation='softmax', kernel_regularizer=regularizers.l2(reg), name='fc3_200'))
 
     return model
 
-def modified_VGG19(input_shape=(64, 64, 3), stddev=0):
+def modified_VGG19(input_shape=(64, 64, 3), drop_rate=0.5, reg=0.01):
     model = Sequential()
-
-    model.add(GaussianNoise(stddev=stddev, input_shape=input_shape)); # noise injection
     
     # Block 1
     model.add(Conv2D(64, (3, 3), padding='same', strides=(1, 1), activation='relu', input_shape=input_shape, data_format='channels_last', name='block1_conv1'))
@@ -81,11 +81,11 @@ def modified_VGG19(input_shape=(64, 64, 3), stddev=0):
     model.add(Conv2D(512, (3, 3), padding='same', strides=(1, 1), activation='relu', data_format='channels_last', name='block5_conv4')) 
         
     model.add(Flatten())
-    model.add(Dense(4096, activation='relu', name='fc1_tinyimagenet'))
-    model.add(Dropout(0.5))
-    model.add(Dense(4096, activation='relu', name='fc2_tinyimagenet'))
-    model.add(Dropout(0.5))
-    model.add(Dense(200, activation='softmax', name='fc3_200'))
+    model.add(Dense(4096, activation='relu', kernel_regularizer=regularizers.l2(reg), name='fc1_timg'))
+    model.add(Dropout(drop_rate))
+    model.add(Dense(4096, activation='relu', kernel_regularizer=regularizers.l2(reg), name='fc2_timg'))
+    model.add(Dropout(drop_rate))
+    model.add(Dense(200, activation='softmax', kernel_regularizer=regularizers.l2(reg), name='fc3_200'))
 
     return model
 
@@ -116,7 +116,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Conv2D(nb_filter3, (1, 1), padding='same', strides=(1, 1), data_format='channels_last', name=conv_name_base + '2c')(x)
     x = BatchNormalization(axis=3, name=bn_name_base + '2c')(x)
 
-    x = merge.Add([x, input_tensor])
+    x = merge([x, input_tensor], mode='sum')
     x = Activation('relu')(x)
     return x
 
@@ -153,12 +153,13 @@ def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2))
     shortcut = Conv2D(nb_filter3, (1, 1), padding='same', strides=strides, data_format='channels_last', name=conv_name_base + '1')(input_tensor)
     shortcut = BatchNormalization(axis=3, name=bn_name_base + '1')(shortcut)
 
-    x = merge.Add([x, shortcut])
+    x = merge([x, shortcut], mode='sum')
     x = Activation('relu')(x)
     return x
 
 
-def modified_ResNet50(input_shape=(64, 64, 3)):
+def modified_ResNet50(input_shape=(64, 64, 3), reg=0.01):
+    ''' This function is a modified version of https://github.com/fchollet/deep-learning-models/releases/tag/v0.1 '''
     '''Instantiate the ResNet50 architecture,
     optionally loading weights pre-trained
     on ImageNet. Note that when using TensorFlow,
@@ -183,8 +184,8 @@ def modified_ResNet50(input_shape=(64, 64, 3)):
         A Keras model instance.
     '''
     img_input = Input(shape=input_shape)
-
-    x = Conv2D(64, (7, 7), padding='same', strides=(2, 2), data_format='channels_last', name='conv1')(x)
+  
+    x = Conv2D(64, (7, 7), padding='same', strides=(2, 2), data_format='channels_last', name='conv1')(img_input)
     x = BatchNormalization(axis=3, name='bn_conv1')(x)
     x = Activation('relu')(x)
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)
@@ -209,10 +210,10 @@ def modified_ResNet50(input_shape=(64, 64, 3)):
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='b')
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='c')
 
-    x = AveragePooling2D((7, 7), name='avg_pool')(x)
+    x = AveragePooling2D((2, 2), name='avg_pool')(x) # (7, 7) in original ResNet50
 
     x = Flatten()(x)
-    x = Dense(200, activation='softmax', name='fc200')(x)
+    x = Dense(200, activation='softmax', kernel_regularizer=regularizers.l2(reg), name='fc200')(x)
     model = Model(img_input, x)
 
     return model
