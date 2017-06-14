@@ -1,0 +1,23 @@
+Hi jkperin,
+
+Thank you for submitting your CS231N assignment! We have finished grading your submission and here are your scores:
+
+HW1 Score (out of 100): 97
+HW1 Bonus (out of 10, if applicable): 0
+
+Here's the breakdown of your score:
+kNN (out of 20): 20
+SVM (out of 25): 25
+Softmax (out of 20): 18
+Two Layer Net (out of 25): 25
+Image Features (out of 10): 9
+Bonus (Softmax, if applicable):
+Bonus (Two Layer Net, if applicable): 0
+Bonus (Q6, if applicable): 0
+Bonus Comments (if applicable):
+Late days used (if applicable): 3
+
+Please see Canvas for comments.
+
+Best,
+CS231N Staff

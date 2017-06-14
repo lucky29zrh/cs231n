@@ -1,0 +1,28 @@
+Hi jkperin,
+
+Thank you for submitting your CS231N assignment! We have finished grading your submission and here are your scores:
+
+HW2 Score (out of 100): 92
+HW2 Bonus (out of 10, if applicable): 1
+
+Here's the breakdown of your score:
+Fully-Connected Nets (25): 25
+Batch Normalization (25): 23
+Dropout (10): 10
+ConvNets (30): 29
+TensorFlow/PyTorch(10): 5
+Bonus (Batch Norm Q2): 1
+Bonus (Q6):
+Comments: Q2: (-2 inline) BN has gamma/beta so the activations are not 0 mean unit variance.; Q4: Spatial batchnorm incorrect dx (-1 point); 
+Late days used (if applicable): 1
+
+Here are some stats (excluding bonus):
+Max: 100
+Mean: 90.98
+Median: 97.00
+Std. Dev: 19.66
+
+Please submit any regrade requests using the google form linked on Piazza.
+
+Best,
+CS231N Staff

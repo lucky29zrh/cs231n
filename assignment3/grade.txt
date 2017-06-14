@@ -1,0 +1,25 @@
+Hi jkperin,
+
+Thank you for submitting your CS231N assignment! We have finished grading your submission and here are your scores:
+
+HW3 Score (out of 100): 98
+HW3 Bonus (out of 10, if applicable): 0
+
+Here's the breakdown of your score:
+RNN_Captioning (25): 25
+LSTM_Captioning (30): 29
+Network Vis (15): 15
+Style Transfer (15): 15
+GAN (15): 14
+Bonus LSTM:
+Bonus GAN: 0
+Comments: Q2: LSTM backward dWh (-1); Q5: Inline question 1 didn't mention how results changed across different runs (-1);
+Late days used (if applicable): 0
+
+Here are some stats (excluding bonus):
+Max: 100
+Mean: 91.79
+Median: 99
+Std. Dev: 20.88
+
+Please submit any regrade requests using the google form linked on Piazza.
